@@ -14,6 +14,7 @@ exports.create = (req, res) => {
     name: req.body.name,
     price: req.body.price,
     description: req.body.description || false,
+    category_id: req.body.category_id
   });
 
   // sauvegarde du produit dans la base de données
@@ -23,6 +24,7 @@ exports.create = (req, res) => {
         message:
           err.message ||
           "apparition d'erreurs lors de la création d'un produit",
+        debug: data
       });
     else res.send(data);
   });
@@ -58,6 +60,25 @@ exports.findOne = (req, res) => {
     } else res.send(data);
   });
 };
+
+// Récupération des produits d'une catégorie
+exports.findByCategory = (req, res) => {
+  Product.findByCategory(req.params.id, (err, data) => {
+    if (err) {
+      if (err.kind === "Aucun produit trouvé") {
+        res.status(404).send({
+          message: `Pas de produit avec la catégorie ${req.params.id}.`,
+        });
+      } else {
+        res.status(500).send({
+          message:
+            "Erreur de récupération du produit avec la catégorie " +
+            req.params.id,
+        });
+      }
+    } else res.send(data);
+  })
+}
 
 // Modification d'un produit
 exports.update = (req, res) => {

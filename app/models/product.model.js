@@ -5,6 +5,7 @@ const Product = function (product) {
   this.name = product.name;
   this.price = product.price;
   this.description = product.description;
+  this.category_id = product.category_id;
 };
 
 // Créer un produit
@@ -36,6 +37,23 @@ Product.findById = (id, result) => {
     result({ kind: "Aucun produit ne correspond" }, null);
   });
 };
+
+// Affichage d'un produit grâce à sa catégorie
+Product.findByCategory = (category, result) => {
+  sql.query(`SELECT * FROM products WHERE category_id = ${category}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    if (res.length) {
+      console.log("Produit trouvé: ", res);
+      result(null, res);
+      return;
+    }
+    result({ kind: "Aucun produit ne correspond" }, null);
+  });
+}
 
 // Affichage de tous les produits
 Product.getAll = (name, result) => {
